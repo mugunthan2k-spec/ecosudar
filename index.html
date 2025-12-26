@@ -2,1118 +2,499 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Eco Sudar – Smart Attendance</title>
-
-  <!-- QR scanner library -->
-  <script src="https://unpkg.com/html5-qrcode"></script>
 
   <style>
     :root{
-      --eco-green:#0b8f3d;
-      --eco-green2:#18b35a;
-      --eco-red:#d8232a;
-      --ink:#0f172a;
-      --muted:#475569;
-      --line:#e5e7eb;
+      --green:#1aa15f;
+      --red:#e53935;
+      --dark:#111827;
+      --muted:#6b7280;
       --bg:#ffffff;
       --card:#ffffff;
-      --shadow: 0 18px 50px rgba(15,23,42,.10);
+      --line:#e5e7eb;
+      --shadow: 0 10px 30px rgba(0,0,0,.10);
       --radius:18px;
     }
-    *{box-sizing:border-box}
+    *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
     body{
-      margin:0;
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      background:var(--bg);
-      color:var(--ink);
-      -webkit-font-smoothing:antialiased;
-      display:flex;
-      justify-content:center;
-      padding:14px;
+      margin:0; background:
+        radial-gradient(1200px 700px at 20% -10%, rgba(229,57,53,.16), transparent 60%),
+        radial-gradient(900px 600px at 90% 0%, rgba(26,161,95,.16), transparent 55%),
+        #fff;
+      color:var(--dark);
     }
-    .app{
-      width:100%;
-      max-width:520px;
-    }
+    .wrap{max-width:980px;margin:20px auto;padding:14px}
     .top{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      padding:12px 10px 6px 10px;
+      display:flex;gap:12px;align-items:center;justify-content:space-between;
+      background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+      box-shadow:var(--shadow);padding:14px;
     }
+    .brand{display:flex;align-items:center;gap:12px}
     .logo{
-      width:54px;height:54px;border-radius:14px;
-      background:#fff;
-      box-shadow:0 6px 16px rgba(15,23,42,.08);
-      display:flex;align-items:center;justify-content:center;
-      overflow:hidden;
-      border:1px solid var(--line);
+      width:56px;height:56px;border-radius:14px;object-fit:contain;border:1px solid var(--line);
+      background:#fff;padding:6px;
     }
-    .logo img{width:100%;height:100%;object-fit:contain;background:#fff}
-    .brand{
-      flex:1;
-      min-width:0;
-    }
-    .brand h1{
-      font-size:18px;line-height:1.2;margin:0;
-    }
-    .brand p{
-      margin:4px 0 0 0;
-      color:var(--muted);
-      font-size:12.5px;
-    }
-
-    .card{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-    .tabs{
-      display:flex;
-      gap:8px;
-      padding:10px;
-      border-bottom:1px solid var(--line);
-      background:#fff;
-    }
-    .tabbtn{
-      flex:1;
-      border:none;
-      border-radius:999px;
-      padding:10px 12px;
-      font-weight:700;
-      cursor:pointer;
-      background:#f3f4f6;
-      color:#111827;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-    }
-    .tabbtn.active{
-      background:linear-gradient(135deg,var(--eco-green),var(--eco-green2));
-      color:#fff;
-      box-shadow:0 10px 26px rgba(11,143,61,.22);
-    }
-
-    .pad{padding:12px}
-    .hint{
-      margin:0 0 10px 0;
-      color:var(--muted);
-      font-size:13px;
-    }
-
-    .row{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
+    h1{font-size:18px;margin:0}
+    .sub{margin:3px 0 0;color:var(--muted);font-size:13px}
+    .tabs{display:flex;gap:10px}
     .btn{
-      border:none;
-      border-radius:999px;
-      padding:12px 14px;
-      font-weight:800;
-      cursor:pointer;
-      width:100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      transition:transform .08s ease, box-shadow .12s ease, opacity .12s ease;
-      user-select:none;
+      border:1px solid var(--line);background:#fff;color:var(--dark);
+      padding:10px 14px;border-radius:14px;font-weight:800;cursor:pointer;
+      display:flex;align-items:center;gap:8px;
+      box-shadow:0 6px 18px rgba(0,0,0,.06);
     }
-    .btn:active{transform:translateY(1px);opacity:.95}
-    .btn.primary{
-      background:linear-gradient(135deg,var(--eco-green),var(--eco-green2));
-      color:#fff;
-      box-shadow:0 10px 26px rgba(11,143,61,.22);
+    .btn.primary{background:linear-gradient(90deg,var(--green),#0f8a4e);color:#fff;border:0}
+    .btn.danger{background:linear-gradient(90deg,var(--red),#c62828);color:#fff;border:0}
+    .btn:active{transform:translateY(1px)}
+    .grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
+    .card{
+      background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+      box-shadow:var(--shadow);padding:14px;
     }
-    .btn.danger{
-      background:linear-gradient(135deg,var(--eco-red),#ff4d4f);
-      color:#fff;
-      box-shadow:0 10px 26px rgba(216,35,42,.18);
+    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .pill{padding:8px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);font-weight:800}
+    .status{margin-top:10px;padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:#fff}
+    .status.ok{border-color:rgba(26,161,95,.35);background:rgba(26,161,95,.08)}
+    .status.bad{border-color:rgba(229,57,53,.35);background:rgba(229,57,53,.08)}
+    .status .big{font-weight:900}
+    video{
+      width:100%;border-radius:16px;border:1px solid var(--line);background:#000;
+      max-height:420px;object-fit:cover;
     }
-    .btn.ghost{
-      background:#f3f4f6;color:#111827;
-      border:1px solid #e5e7eb;
+    .hint{color:var(--muted);font-size:13px;margin-top:8px}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{border-bottom:1px solid var(--line);padding:10px 8px;font-size:13px;text-align:left;vertical-align:top}
+    th{color:var(--muted);font-weight:900}
+    .thumb{width:56px;height:56px;border-radius:12px;object-fit:cover;border:1px solid var(--line)}
+    .hidden{display:none !important}
+    .right{margin-left:auto}
+    .inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+    select,input{
+      width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:14px;font-weight:800;
     }
-
-    .status{
-      margin-top:10px;
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:10px 12px;
-      background:#fff;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-    }
-    .status .left{
-      min-width:0;
-    }
-    .status .title{
-      margin:0;
-      font-weight:900;
-      font-size:14px;
-    }
-    .status .sub{
-      margin:2px 0 0 0;
-      color:var(--muted);
-      font-size:12.5px;
-      word-break:break-word;
-    }
-    .pill{
-      font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      font-weight:900;
-      white-space:nowrap;
-      border:1px solid var(--line);
-      background:#fff;
-    }
-    .pill.ok{color:var(--eco-green);border-color:rgba(11,143,61,.25);background:rgba(11,143,61,.06)}
-    .pill.warn{color:#b45309;border-color:rgba(180,83,9,.25);background:rgba(180,83,9,.08)}
-    .pill.err{color:var(--eco-red);border-color:rgba(216,35,42,.25);background:rgba(216,35,42,.08)}
-
-    /* Scanner modal */
-    .modal{
-      position:fixed;inset:0;
-      background:rgba(15,23,42,.58);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:14px;
-      z-index:9999;
-    }
-    .modal.show{display:flex;}
-    .modalbox{
-      width:100%;
-      max-width:520px;
-      background:#fff;
-      border-radius:18px;
-      border:1px solid var(--line);
-      box-shadow:0 28px 80px rgba(0,0,0,.25);
-      overflow:hidden;
-    }
-    .modalhead{
-      padding:10px 12px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      background:linear-gradient(135deg,rgba(11,143,61,.10),rgba(24,179,90,.08));
-      border-bottom:1px solid var(--line);
-    }
-    .modalhead .mh{
-      font-weight:900;
-      font-size:14px;
-      margin:0;
-    }
-    .close{
-      border:none;
-      border-radius:999px;
-      padding:8px 12px;
-      cursor:pointer;
-      font-weight:900;
-      background:#fff;
-      border:1px solid var(--line);
-    }
-    .scanwrap{
-      padding:10px;
-      background:#fff;
-    }
-    #qr-reader{
-      width:100%;
-      border-radius:16px;
-      overflow:hidden;
-      border:1px solid var(--line);
-      box-shadow: inset 0 0 0 3px rgba(11,143,61,.10);
-      position:relative;
-      background:#fff;
-    }
-    .scanframe{
-      pointer-events:none;
-      position:absolute;
-      inset:14px;
-      border-radius:16px;
-      border:2px solid rgba(11,143,61,.60);
-      box-shadow:0 0 14px rgba(11,143,61,.35);
-      animation:pulse 1.2s ease-in-out infinite;
-    }
-    @keyframes pulse{
-      0%,100%{opacity:.65}
-      50%{opacity:1}
-    }
-
-    /* Capture preview */
-    .preview{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      margin-top:10px;
-    }
-    .thumb{
-      width:64px;height:64px;
-      border-radius:14px;
-      overflow:hidden;
-      border:1px solid var(--line);
-      background:#fff;
-      flex:0 0 auto;
-    }
-    .thumb img{width:100%;height:100%;object-fit:cover}
-
-    /* Table */
-    .tablewrap{margin-top:12px;border:1px solid var(--line);border-radius:16px;overflow:hidden}
-    table{width:100%;border-collapse:collapse;font-size:12.5px}
-    thead th{
-      text-align:left;
-      background:#f8fafc;
-      padding:10px 10px;
-      border-bottom:1px solid var(--line);
-      font-weight:900;
-      color:#111827;
-    }
-    tbody td{
-      padding:10px 10px;
-      border-bottom:1px solid #eef2f7;
-      vertical-align:top;
-    }
-    tbody tr:last-child td{border-bottom:none}
-    .tphoto{
-      width:44px;height:44px;border-radius:12px;overflow:hidden;border:1px solid var(--line);
-      background:#fff;
-    }
-    .tphoto img{width:100%;height:100%;object-fit:cover}
-    .small{color:var(--muted);font-size:12px}
-    .right{ text-align:right; }
-    .mono{ font-variant-numeric: tabular-nums; }
-
-    /* Admin login */
-    .pinrow{display:flex;gap:10px;margin-top:10px}
-    input[type="password"], input[type="number"], select{
-      width:100%;
-      padding:12px 12px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      outline:none;
-      font-size:14px;
-    }
-    input:focus, select:focus{
-      border-color:rgba(11,143,61,.45);
-      box-shadow:0 0 0 3px rgba(11,143,61,.12);
-    }
-
-    .footerbtns{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-    .footerbtns .btn{flex:1;min-width:160px}
-
-    /* Tiny admin button on scan tab */
-    .adminCorner{
-      position:absolute;
-      right:14px;
-      top:14px;
-      border:none;
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:999px;
-      padding:8px 10px;
-      font-weight:900;
-      cursor:pointer;
-      color:#111827;
-      box-shadow:0 8px 18px rgba(15,23,42,.06);
-    }
-    .rel{position:relative}
+    @media (max-width:720px){ .inputs{grid-template-columns:1fr} }
   </style>
 </head>
 
 <body>
-  <div class="app">
+  <div class="wrap">
     <div class="top">
-      <div class="logo" aria-label="Eco Sudar Logo">
-        <img src="logo.png" alt="Eco Sudar Logo" />
-      </div>
       <div class="brand">
-        <h1>Eco Sudar – Smart Attendance</h1>
-        <p>Mobile kiosk attendance (QR + selfie capture). Reports viewable on any device.</p>
+        <!-- Make sure your repo has logo.png -->
+        <img class="logo" src="logo.png" alt="Eco Sudar logo">
+        <div>
+          <h1>Eco Sudar – Smart Attendance</h1>
+          <div class="sub">Mobile kiosk attendance (QR + selfie capture). Reports viewable on any device.</div>
+        </div>
       </div>
-    </div>
-
-    <div class="card rel">
-      <button class="adminCorner" id="adminCornerBtn" type="button" title="Admin Login">Admin</button>
 
       <div class="tabs">
-        <button class="tabbtn active" id="tabScanBtn" type="button">📷 Scan Mode</button>
-        <button class="tabbtn" id="tabAdminBtn" type="button">📊 Admin Mode</button>
+        <button class="btn primary" id="tabScan">📷 Scan Mode</button>
+        <button class="btn danger" id="tabAdmin">📊 Admin Mode</button>
       </div>
+    </div>
 
-      <!-- SCAN MODE -->
-      <div class="pad" id="scanTab">
-        <p class="hint">
-          Gate phone: tap <b>Start Scan Session</b>, keep camera ON. Employees show QR card in front camera.
-        </p>
-
+    <!-- SCAN MODE -->
+    <div class="grid" id="scanView">
+      <div class="card">
         <div class="row">
-          <button class="btn primary" id="startBtn" type="button">▶ Start Scan Session</button>
-          <button class="btn danger" id="endBtn" type="button" style="display:none;">⏹ End Scan Session</button>
+          <span class="pill">Selfie camera + QR scan</span>
+          <span class="pill">Beep + Photo</span>
+          <span class="pill right" id="camState">Camera: OFF</span>
         </div>
 
-        <div class="status" style="margin-top:12px;">
-          <div class="left">
-            <p class="title" id="statusTitle">Ready</p>
-            <p class="sub" id="statusSub">Tap “Start Scan Session” to begin.</p>
-          </div>
-          <span class="pill ok mono" id="todayPill">Today: --</span>
+        <div style="margin-top:10px" class="row">
+          <button class="btn primary" id="btnStart">▶ Start Camera</button>
+          <button class="btn" id="btnIn">✅ Mark IN</button>
+          <button class="btn danger" id="btnOut">🚪 Mark OUT</button>
+          <button class="btn" id="btnStop">⏹ Stop Camera</button>
         </div>
 
-        <div class="tablewrap">
-          <table id="todayTable">
-            <thead>
-              <tr>
-                <th>Employee</th>
-                <th class="mono">IN</th>
-                <th class="mono">OUT</th>
-                <th class="mono right">Hrs</th>
-                <th>Photo</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+        <div class="hint">
+          Keep the phone fixed. Employees scan QR in selfie camera. After scan: 1 beep → selfie captured → upload → 2 beeps + message.
+          Scanner stays ON until you press Stop Camera or close the page.
         </div>
 
-        <div class="footerbtns">
-          <button class="btn ghost" id="refreshTodayBtn" type="button">↻ Refresh Today</button>
-          <button class="btn ghost" id="downloadTodayBtn" type="button">⬇ Download Today CSV</button>
+        <div style="margin-top:12px">
+          <video id="video" playsinline muted></video>
+          <canvas id="snap" class="hidden"></canvas>
         </div>
 
-        <p class="small" style="margin:10px 0 0 0;">
-          Note: Monthly report is in Admin Mode (PIN protected). Scanning continues until HR ends the session.
-        </p>
-      </div>
-
-      <!-- ADMIN MODE -->
-      <div class="pad" id="adminTab" style="display:none;">
-        <div id="loginBox">
-          <p class="hint"><b>Admin Login</b> (Eco Sudar only). Enter 4-digit PIN.</p>
-          <div class="pinrow">
-            <input id="pinInput" type="password" inputmode="numeric" maxlength="4" placeholder="Enter PIN" />
-            <button class="btn primary" id="pinBtn" type="button" style="width:auto;white-space:nowrap;">Login</button>
-          </div>
-          <p class="small" style="margin-top:10px;">
-            Reports can be viewed on laptop, mobile, or client phone using the same link + PIN.
-          </p>
-        </div>
-
-        <div id="adminBox" style="display:none;">
-          <p class="hint"><b>Monthly Report</b> – choose month/year and load logs (includes photos).</p>
-
-          <div class="row" style="gap:10px;">
-            <select id="yearSel"></select>
-            <select id="monthSel"></select>
-          </div>
-
-          <div class="footerbtns">
-            <button class="btn primary" id="loadReportBtn" type="button">Load Monthly Report</button>
-            <button class="btn ghost" id="exportReportBtn" type="button">Export Monthly CSV</button>
-          </div>
-
-          <div class="status" style="margin-top:12px;">
-            <div class="left">
-              <p class="title" id="adminStatusTitle">Report not loaded</p>
-              <p class="sub" id="adminStatusSub">Select month/year and tap “Load Monthly Report”.</p>
-            </div>
-            <span class="pill ok mono" id="reportPill">Rows: 0</span>
-          </div>
-
-          <div class="tablewrap">
-            <table id="reportTable">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Employee</th>
-                  <th class="mono">Action</th>
-                  <th class="mono">IN</th>
-                  <th class="mono">OUT</th>
-                  <th class="mono right">Hrs</th>
-                  <th>Photo</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-
-          <div class="footerbtns">
-            <button class="btn ghost" id="logoutBtn" type="button">Logout</button>
-          </div>
+        <div id="scanStatus" class="status">
+          <div class="big">Ready</div>
+          <div id="scanMsg" class="sub">Press Start Camera. Then press IN or OUT and show QR.</div>
         </div>
       </div>
 
+      <div class="card">
+        <div class="row">
+          <span class="pill">Today Logs</span>
+          <button class="btn right" id="btnClearLocal">🧹 Clear Local Table</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Employee</th>
+              <th>Action</th>
+              <th>Photo</th>
+            </tr>
+          </thead>
+          <tbody id="todayBody"></tbody>
+        </table>
+      </div>
     </div>
-  </div>
 
-  <!-- Scanner modal -->
-  <div class="modal" id="scanModal" role="dialog" aria-modal="true">
-    <div class="modalbox">
-      <div class="modalhead">
-        <p class="mh" id="modalTitle">Scan Session (Selfie Camera)</p>
-        <button class="close" id="modalCloseBtn" type="button">Close</button>
-      </div>
-      <div class="scanwrap">
-        <div style="position:relative;">
-          <div id="qr-reader"></div>
-          <div class="scanframe"></div>
+    <!-- ADMIN MODE -->
+    <div class="grid hidden" id="adminView">
+      <div class="card">
+        <div class="row">
+          <span class="pill">Monthly Report (includes photos)</span>
+          <span class="pill right">PIN: 7274</span>
         </div>
 
-        <div class="preview" id="previewRow" style="display:none;">
-          <div class="thumb"><img id="previewImg" alt="Captured photo preview"></div>
-          <div class="small" id="previewText">Captured</div>
+        <div class="inputs">
+          <input id="pin" type="password" placeholder="Enter PIN (7274)" />
+          <div></div>
+          <select id="year"></select>
+          <select id="month"></select>
         </div>
 
-        <p class="small" style="margin:10px 2px 0 2px;">
-          Keep this open during shift. It will keep scanning continuously until you end session.
-        </p>
+        <div class="row" style="margin-top:12px">
+          <button class="btn danger" id="btnLoad">Load Monthly Report</button>
+          <button class="btn" id="btnExport">Export CSV</button>
+        </div>
+
+        <div id="repStatus" class="status">
+          <div class="big">Report</div>
+          <div id="repMsg" class="sub">Select month/year and load.</div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Employee</th>
+              <th>Action</th>
+              <th>IN</th>
+              <th>OUT</th>
+              <th>Hrs</th>
+              <th>Photo</th>
+            </tr>
+          </thead>
+          <tbody id="repBody"></tbody>
+        </table>
       </div>
     </div>
   </div>
 
-<script>
-  // ===== CONFIG =====
-  const API_URL = "https://script.google.com/macros/s/AKfycbxqpTDCJT1kRBawcUrOPRVfrYYenVrpTCHNaTAQjUKJrFzB8paIXe6_WNHqcOVOMrV0/exec";
-  const ADMIN_PIN = "7274";
+  <!-- QR scanner library -->
+  <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
 
-  // ===== STORAGE KEYS =====
-  const LS_OPEN = "ecosudar_openSessions_v1";     // per-day open IN status
-  const LS_DONE = "ecosudar_doneSessions_v1";     // completed IN-OUT rows (today view)
-  const LS_COOLDOWN = "ecosudar_cooldown_v1";     // prevent rapid duplicates
+  <script>
+    // ✅ INSERTED YOUR NEW WEB APP URL HERE
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwOcPqCENavIbiOJw4yLoYFr27yjk3_QJaEoGO5nGomhfEq7oryojXZu7oRUUPWJi7W/exec";
 
-  // ===== STATE =====
-  let html5 = null;
-  let scanRunning = false;
-  let currentMonthRows = [];
-  let cooldownMap = {}; // name -> lastScanMs
+    // Tabs
+    const scanView = document.getElementById("scanView");
+    const adminView = document.getElementById("adminView");
+    document.getElementById("tabScan").onclick = ()=>{ scanView.classList.remove("hidden"); adminView.classList.add("hidden"); };
+    document.getElementById("tabAdmin").onclick = ()=>{ scanView.classList.add("hidden"); adminView.classList.remove("hidden"); };
 
-  // ===== UI HELPERS =====
-  const el = (id)=>document.getElementById(id);
-  function setStatus(title, sub, pillType="ok", pillText=null){
-    el("statusTitle").textContent = title;
-    el("statusSub").textContent = sub;
-    if(pillText!==null){
-      el("todayPill").textContent = pillText;
-      el("todayPill").className = "pill " + pillType + " mono";
+    // Scan elements
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("snap");
+    const camState = document.getElementById("camState");
+    const scanStatus = document.getElementById("scanStatus");
+    const scanMsg = document.getElementById("scanMsg");
+    const todayBody = document.getElementById("todayBody");
+
+    let stream = null;
+    let scanning = false;
+    let desiredAction = "IN";
+    let lock = false;
+
+    function setStatus(ok, title, msg){
+      scanStatus.className = "status " + (ok ? "ok" : "bad");
+      scanStatus.querySelector(".big").textContent = title;
+      scanMsg.textContent = msg;
     }
-  }
-  function setAdminStatus(title, sub, pillType="ok", pillText=null){
-    el("adminStatusTitle").textContent = title;
-    el("adminStatusSub").textContent = sub;
-    if(pillText!==null){
-      el("reportPill").textContent = pillText;
-      el("reportPill").className = "pill " + pillType + " mono";
-    }
-  }
-  function showModal(show){
-    el("scanModal").classList.toggle("show", !!show);
-  }
-  function todayISO(){
-    const d = new Date();
-    return d.toISOString().slice(0,10);
-  }
-  function nowTimeHHMM(){
-    const d=new Date();
-    return d.toTimeString().slice(0,5);
-  }
-  function deviceId(){
-    // lightweight stable id per browser
-    let id = localStorage.getItem("ecosudar_deviceId");
-    if(!id){
-      id = "DEV-" + Math.random().toString(16).slice(2,10).toUpperCase();
-      localStorage.setItem("ecosudar_deviceId", id);
-    }
-    return id;
-  }
 
-  // ===== BEEP =====
-  function beep(times=1){
-    try{
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const duration = 0.08;
-      const gap = 0.08;
-      let t = ctx.currentTime;
-
-      for(let i=0;i<times;i++){
+    // Beep: 1 beep on QR found, 2 beeps on success
+    function beep(times=1){
+      try{
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
         const o = ctx.createOscillator();
         const g = ctx.createGain();
-        o.type="sine";
-        o.frequency.value = i===0 ? 880 : 1040;
-        g.gain.value = 0.08;
+        o.type = "sine";
+        o.frequency.value = 880;
         o.connect(g); g.connect(ctx.destination);
-        o.start(t);
-        o.stop(t + duration);
-        t += duration + gap;
-      }
-      setTimeout(()=>ctx.close(), 600);
-    }catch(e){}
-  }
 
-  // ===== LOCAL STORAGE =====
-  function loadJSON(key, fallback){
-    try{
-      const v = localStorage.getItem(key);
-      return v ? JSON.parse(v) : fallback;
-    }catch(e){ return fallback; }
-  }
-  function saveJSON(key, val){
-    localStorage.setItem(key, JSON.stringify(val));
-  }
-
-  // ===== TABLE RENDER =====
-  function renderTodayTable(){
-    const tbody = el("todayTable").querySelector("tbody");
-    tbody.innerHTML = "";
-    const done = loadJSON(LS_DONE, []);
-    const open = loadJSON(LS_OPEN, {});
-    const today = todayISO();
-
-    // Completed rows first
-    const rows = done.filter(r=>r.date===today);
-
-    // Add open rows (IN but no OUT)
-    for(const k in open){
-      const r = open[k];
-      if(r && r.date===today){
-        rows.push({
-          name: r.name,
-          date: r.date,
-          inTime: r.inTime,
-          outTime: "",
-          durationHrs: "",
-          photoUrl: r.lastPhotoUrl || "",
-          status: "OPEN"
-        });
-      }
-    }
-
-    // Sort by last activity time
-    rows.sort((a,b)=>{
-      const ta = (a.outTime || a.inTime || "00:00");
-      const tb = (b.outTime || b.inTime || "00:00");
-      return tb.localeCompare(ta);
-    });
-
-    for(const r of rows){
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${escapeHtml(r.name || "")}</td>
-        <td class="mono">${escapeHtml(r.inTime || "—")}</td>
-        <td class="mono">${escapeHtml(r.outTime || "—")}</td>
-        <td class="mono right">${r.durationHrs!=="" ? Number(r.durationHrs).toFixed(2) : "—"}</td>
-        <td>
-          ${r.photoUrl ? `<a href="${r.photoUrl}" target="_blank" rel="noopener">
-            <div class="tphoto"><img src="${r.photoUrl}" alt="photo"></div>
-          </a>` : "—"}
-        </td>
-      `;
-      tbody.appendChild(tr);
-    }
-  }
-
-  function renderReportTable(rows){
-    const tbody = el("reportTable").querySelector("tbody");
-    tbody.innerHTML = "";
-    for(const r of rows){
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td class="mono">${escapeHtml(r.date || "")}</td>
-        <td>${escapeHtml(r.name || "")}</td>
-        <td class="mono">${escapeHtml(r.action || "")}</td>
-        <td class="mono">${escapeHtml(r.inTime || "—")}</td>
-        <td class="mono">${escapeHtml(r.outTime || "—")}</td>
-        <td class="mono right">${r.durationHrs!=="" && r.durationHrs!=null ? Number(r.durationHrs).toFixed(2) : "—"}</td>
-        <td>
-          ${r.photoUrl ? `<a href="${r.photoUrl}" target="_blank" rel="noopener">
-            <div class="tphoto"><img src="${r.photoUrl}" alt="photo"></div>
-          </a>` : "—"}
-        </td>
-      `;
-      tbody.appendChild(tr);
-    }
-  }
-
-  function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, (m)=>({
-      "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
-    }[m]));
-  }
-
-  // ===== IN/OUT LOGIC (single scan button behavior) =====
-  function decideAction(name){
-    // Toggle based on openSessions for today
-    const open = loadJSON(LS_OPEN, {});
-    const key = name + "|" + todayISO();
-    return open[key] ? "OUT" : "IN";
-  }
-
-  function calcDurationHrs(inHHMM, outHHMM){
-    if(!inHHMM || !outHHMM) return "";
-    const [ih,im] = inHHMM.split(":").map(Number);
-    const [oh,om] = outHHMM.split(":").map(Number);
-    const mins = (oh*60+om) - (ih*60+im);
-    return mins >= 0 ? (mins/60) : "";
-  }
-
-  // ===== PHOTO CAPTURE FROM SAME (SELFIE) CAMERA VIEW =====
-  function capturePhotoDataUrl(){
-    // html5-qrcode renders a <video> inside #qr-reader
-    const container = el("qr-reader");
-    const video = container ? container.querySelector("video") : null;
-    if(!video || video.readyState < 2) return null;
-
-    const w = video.videoWidth || 640;
-    const h = video.videoHeight || 480;
-
-    const canvas = document.createElement("canvas");
-    canvas.width = w;
-    canvas.height = h;
-    const ctx = canvas.getContext("2d");
-
-    // Mirror selfie (optional) – usually looks natural
-    ctx.translate(w, 0);
-    ctx.scale(-1, 1);
-
-    ctx.drawImage(video, 0, 0, w, h);
-
-    // JPEG to reduce size
-    return canvas.toDataURL("image/jpeg", 0.72);
-  }
-
-  function showPreview(photoDataUrl, text){
-    if(!photoDataUrl){
-      el("previewRow").style.display="none";
-      return;
-    }
-    el("previewImg").src = photoDataUrl;
-    el("previewText").textContent = text || "Captured";
-    el("previewRow").style.display="flex";
-    setTimeout(()=>{ el("previewRow").style.display="none"; }, 1800);
-  }
-
-  // ===== BACKEND CALL =====
-  async function postLog(payload){
-    const res = await fetch(API_URL, {
-      method:"POST",
-      headers:{ "Content-Type":"text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
-    });
-    return await res.json();
-  }
-
-  async function getMonthlyReport(year, month){
-    const url = new URL(API_URL);
-    url.searchParams.set("action","report");
-    url.searchParams.set("year", String(year));
-    url.searchParams.set("month", String(month));
-    const res = await fetch(url.toString(), { method:"GET" });
-    return await res.json();
-  }
-
-  // ===== SCANNING CONTROL =====
-  async function startSession(){
-    // load cooldown map
-    cooldownMap = loadJSON(LS_COOLDOWN, {});
-
-    // Build initial open sessions based on today's logs (for safety after refresh)
-    // We’ll fetch current month report and rebuild only today's toggle state.
-    try{
-      await rebuildOpenFromServerToday();
-    }catch(e){}
-
-    el("startBtn").style.display="none";
-    el("endBtn").style.display="flex";
-    setStatus("Scanning…", "Show your QR code. Camera stays ON until HR ends the session.", "ok", "Today: " + todayISO());
-    showModal(true);
-
-    if(!html5){
-      html5 = new Html5Qrcode("qr-reader");
-    }
-
-    // Important: use selfie camera
-    const config = { fps: 15, qrbox: { width: 260, height: 260 } };
-
-    scanRunning = true;
-
-    // Start scanning continuously
-    try{
-      await html5.start(
-        { facingMode: "user" },
-        config,
-        async (decodedText) => {
-          if(!scanRunning) return;
-          const name = (decodedText || "").trim();
-          if(!name) return;
-
-          // Cooldown per person to avoid rapid duplicates (8 seconds)
-          const now = Date.now();
-          const last = cooldownMap[name] || 0;
-          if(now - last < 8000) return;
-          cooldownMap[name] = now;
-          saveJSON(LS_COOLDOWN, cooldownMap);
-
-          // Beep 1 (QR detected)
-          beep(1);
-
-          // Capture selfie photo immediately
-          const photoDataUrl = capturePhotoDataUrl();
-          showPreview(photoDataUrl, `Captured: ${name}`);
-
-          // Decide IN/OUT automatically
-          const action = decideAction(name);
-          const iso = new Date().toISOString();
-          const date = todayISO();
-          const time = nowTimeHHMM();
-
-          const open = loadJSON(LS_OPEN, {});
-          const done = loadJSON(LS_DONE, []);
-          const key = name + "|" + date;
-
-          let inTime = "", outTime = "", durationHrs = "";
-
-          if(action === "IN"){
-            inTime = time;
-            open[key] = { name, date, inTime, lastPhotoUrl:"" };
-          }else{
-            // OUT
-            if(open[key] && open[key].inTime){
-              inTime = open[key].inTime;
-              outTime = time;
-              durationHrs = calcDurationHrs(inTime, outTime);
-              delete open[key];
-
-              // store completed row locally (for today's table)
-              done.push({ name, date, inTime, outTime, durationHrs, photoUrl:"" });
-            }else{
-              // If OUT without IN (should not happen often)
-              setStatus("Scan error", `No open IN found for ${name}. Please scan again (IN first).`, "err", "Today: " + date);
-              return;
-            }
-          }
-
-          saveJSON(LS_OPEN, open);
-          saveJSON(LS_DONE, done);
-
-          // Push to server (includes photo base64)
-          try{
-            const payload = {
-              action: "log",
-              name,
-              action,
-              iso,
-              inTime: inTime || "",
-              outTime: outTime || "",
-              durationHrs: durationHrs!=="" ? String(Number(durationHrs).toFixed(2)) : "",
-              deviceId: deviceId(),
-              photoBase64: photoDataUrl || ""
-            };
-
-            const resp = await postLog(payload);
-
-            if(resp && resp.ok){
-              // Save server photo URL back into local rows for display
-              if(resp.photoUrl){
-                // update open session photo
-                const open2 = loadJSON(LS_OPEN, {});
-                if(open2[key]){
-                  open2[key].lastPhotoUrl = resp.photoUrl;
-                  saveJSON(LS_OPEN, open2);
-                }
-                // update last done row photo
-                const done2 = loadJSON(LS_DONE, []);
-                for(let i=done2.length-1;i>=0;i--){
-                  if(done2[i].name===name && done2[i].date===date){
-                    done2[i].photoUrl = resp.photoUrl;
-                    break;
-                  }
-                }
-                saveJSON(LS_DONE, done2);
-              }
-
-              // Double beep (success)
-              beep(2);
-
-              // On-screen message
-              if(action === "OUT"){
-                setStatus("Thank you", "Thank you, have a good day.", "ok", "Today: " + date);
-              }else{
-                setStatus("Success", "Attendance marked successfully.", "ok", "Today: " + date);
-              }
-
-              renderTodayTable();
-            }else{
-              // backend error – still keep local, show warning
-              setStatus("Saved locally", "Network/backend issue. Data stored locally; please try again later.", "warn", "Today: " + date);
-              renderTodayTable();
-            }
-          }catch(err){
-            setStatus("Saved locally", "No internet / backend unreachable. Stored locally on this phone.", "warn", "Today: " + date);
-            renderTodayTable();
-          }
-        },
-        () => { /* ignore decode errors */ }
-      );
-    }catch(e){
-      scanRunning = false;
-      el("startBtn").style.display="flex";
-      el("endBtn").style.display="none";
-      showModal(false);
-      setStatus("Camera blocked", "Camera permission denied or camera busy. Please allow permission and retry.", "err", "Today: " + todayISO());
-    }
-  }
-
-  async function endSession(){
-    scanRunning = false;
-    el("endBtn").style.display="none";
-    el("startBtn").style.display="flex";
-    showModal(false);
-
-    // Stop camera safely
-    try{
-      if(html5){
-        await html5.stop();
-      }
-    }catch(e){}
-
-    setStatus("Session ended", "Camera is OFF. You can start next session anytime.", "ok", "Today: " + todayISO());
-    renderTodayTable();
-  }
-
-  async function rebuildOpenFromServerToday(){
-    const d = new Date();
-    const year = d.getFullYear();
-    const month = d.getMonth()+1;
-
-    const resp = await getMonthlyReport(year, month);
-    if(!resp || !resp.ok || !Array.isArray(resp.rows)) return;
-
-    const today = todayISO();
-    const rowsToday = resp.rows.filter(r=>String(r.date)===today);
-
-    // Determine last state per employee for today
-    const open = {};
-    const done = loadJSON(LS_DONE, []).filter(r=>r.date!==today); // keep previous days
-
-    // Sort by time if available
-    rowsToday.sort((a,b)=>{
-      const ta = (a.outTime || a.inTime || "");
-      const tb = (b.outTime || b.inTime || "");
-      return ta.localeCompare(tb);
-    });
-
-    // We'll rebuild using server logs (action IN/OUT)
-    const lastIn = {}; // name -> inTime
-    for(const r of rowsToday){
-      const name = (r.name||"").trim();
-      if(!name) continue;
-      if((r.action||"").toUpperCase()==="IN"){
-        lastIn[name] = r.inTime || "";
-        open[name + "|" + today] = { name, date: today, inTime: lastIn[name], lastPhotoUrl: r.photoUrl || "" };
-      }else if((r.action||"").toUpperCase()==="OUT"){
-        const inTime = lastIn[name] || r.inTime || "";
-        const outTime = r.outTime || "";
-        const durationHrs = r.durationHrs || "";
-        // Completed row
-        if(inTime && outTime){
-          done.push({ name, date: today, inTime, outTime, durationHrs, photoUrl: r.photoUrl || "" });
+        let t = ctx.currentTime;
+        for(let i=0;i<times;i++){
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.exponentialRampToValueAtTime(0.25, t+0.01);
+          g.gain.exponentialRampToValueAtTime(0.0001, t+0.12);
+          t += 0.18;
         }
-        delete open[name + "|" + today];
-        lastIn[name] = "";
+        o.start();
+        o.stop(t);
+        o.onended = ()=>ctx.close();
+      }catch(e){}
+    }
+
+    async function startCamera(){
+      try{
+        // Use selfie camera
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "user", width: {ideal: 1280}, height: {ideal: 720} },
+          audio: false
+        });
+        video.srcObject = stream;
+        await video.play();
+        camState.textContent = "Camera: ON";
+        scanning = true;
+        setStatus(true, "Scanning…", "Show QR. After decode → selfie capture → upload → success.");
+        scanLoop();
+      }catch(err){
+        camState.textContent = "Camera: OFF";
+        setStatus(false, "Camera blocked", "Allow camera permission in browser settings and reload.");
       }
     }
 
-    saveJSON(LS_OPEN, open);
-    saveJSON(LS_DONE, done);
-    renderTodayTable();
-  }
+    function stopCamera(){
+      scanning = false;
+      lock = false;
+      if(stream){
+        stream.getTracks().forEach(t=>t.stop());
+        stream = null;
+      }
+      video.srcObject = null;
+      camState.textContent = "Camera: OFF";
+      setStatus(true, "Stopped", "Press Start Camera to begin again.");
+    }
 
-  // ===== ADMIN =====
-  function adminLoggedIn(){
-    return sessionStorage.getItem("ecosudar_admin_ok")==="1";
-  }
-  function setAdminLoggedIn(v){
-    sessionStorage.setItem("ecosudar_admin_ok", v ? "1" : "0");
-  }
-  function showAdminArea(){
-    el("loginBox").style.display = adminLoggedIn() ? "none" : "block";
-    el("adminBox").style.display = adminLoggedIn() ? "block" : "none";
-  }
+    document.getElementById("btnStart").onclick = startCamera;
+    document.getElementById("btnStop").onclick = stopCamera;
 
-  async function loadReport(){
-    const year = Number(el("yearSel").value);
-    const month = Number(el("monthSel").value);
-    setAdminStatus("Loading…","Fetching monthly logs from Google Sheet.","ok","Rows: …");
+    document.getElementById("btnIn").onclick = ()=>{
+      desiredAction = "IN";
+      setStatus(true, "IN mode", "Show QR to mark IN. Camera keeps scanning.");
+    };
+    document.getElementById("btnOut").onclick = ()=>{
+      desiredAction = "OUT";
+      setStatus(true, "OUT mode", "Show QR to mark OUT. Thank you message after success.");
+    };
 
-    try{
-      const resp = await getMonthlyReport(year, month);
-      if(!resp || !resp.ok){
-        setAdminStatus("Failed","Could not load report. Check Apps Script deployment access = Anyone.","err","Rows: 0");
-        renderReportTable([]);
-        currentMonthRows = [];
+    document.getElementById("btnClearLocal").onclick = ()=>{
+      todayBody.innerHTML = "";
+    };
+
+    function grabSelfieDataURL(){
+      const w = video.videoWidth || 640;
+      const h = video.videoHeight || 480;
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, w, h);
+      return canvas.toDataURL("image/jpeg", 0.78);
+    }
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    function addTodayRow(name, action, photoUrl){
+      const t = new Date();
+      const timeStr = t.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${timeStr}</td>
+        <td><b>${escapeHtml(name)}</b></td>
+        <td>${action}</td>
+        <td>${photoUrl ? `<a href="${photoUrl}" target="_blank"><img class="thumb" src="${photoUrl}"></a>` : "-"}</td>
+      `;
+      todayBody.prepend(tr);
+    }
+
+    async function sendLog(name, action, photoBase64){
+      const payload = { name, type: action, ts: new Date().toISOString(), photoBase64 };
+      const res = await fetch(`${WEB_APP_URL}?action=log`, {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify(payload)
+      });
+      return await res.json();
+    }
+
+    // QR decode loop
+    async function scanLoop(){
+      if(!scanning) return;
+
+      try{
+        const w = video.videoWidth || 640;
+        const h = video.videoHeight || 480;
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0, w, h);
+
+        const img = ctx.getImageData(0,0,w,h);
+        const code = jsQR(img.data, w, h, { inversionAttempts: "dontInvert" });
+
+        if(code && code.data && !lock){
+          lock = true;
+
+          const name = String(code.data).trim();
+          if(!name){ lock = false; }
+          else{
+            beep(1);
+            setStatus(true, "Scanned", `${name} → Capturing selfie & uploading…`);
+
+            // Capture selfie AFTER QR found
+            const selfie = grabSelfieDataURL();
+
+            let resp;
+            try{
+              resp = await sendLog(name, desiredAction, selfie);
+            }catch(e){
+              resp = { ok:false, error:"Network error. Check Apps Script deployment access = Anyone." };
+            }
+
+            if(resp.ok){
+              beep(2);
+              const msg = (desiredAction === "OUT") ? "Thank you!" : "Scanned successfully";
+              setStatus(true, msg, `${name} marked ${desiredAction}.`);
+              addTodayRow(name, desiredAction, resp.photoUrl || "");
+
+              // allow next scan quickly
+              setTimeout(()=>{ lock = false; }, 650);
+            }else{
+              setStatus(false, "Failed", resp.error || "Upload failed. Ensure Apps Script access = Anyone.");
+              setTimeout(()=>{ lock = false; }, 1200);
+            }
+          }
+        }
+      }catch(e){}
+
+      requestAnimationFrame(scanLoop);
+    }
+
+    // ADMIN REPORT
+    const yearSel = document.getElementById("year");
+    const monthSel = document.getElementById("month");
+    const repStatus = document.getElementById("repStatus");
+    const repMsg = document.getElementById("repMsg");
+    const repBody = document.getElementById("repBody");
+
+    function repSet(ok, title, msg){
+      repStatus.className = "status " + (ok ? "ok" : "bad");
+      repStatus.querySelector(".big").textContent = title;
+      repMsg.textContent = msg;
+    }
+
+    function fillYM(){
+      const now = new Date();
+      const y = now.getFullYear();
+      for(let i=y-2;i<=y+1;i++){
+        const o=document.createElement("option");
+        o.value=i; o.textContent=i;
+        if(i===y) o.selected=true;
+        yearSel.appendChild(o);
+      }
+      const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      const m = now.getMonth()+1;
+      for(let i=1;i<=12;i++){
+        const o=document.createElement("option");
+        o.value=i; o.textContent = String(i).padStart(2,"0")+" - "+months[i-1];
+        if(i===m) o.selected=true;
+        monthSel.appendChild(o);
+      }
+    }
+    fillYM();
+
+    async function loadReport(){
+      if(document.getElementById("pin").value !== "7274"){
+        repSet(false, "Denied", "Wrong PIN.");
         return;
       }
-      currentMonthRows = resp.rows || [];
-      renderReportTable(currentMonthRows);
-      setAdminStatus("Report loaded","Monthly logs loaded successfully.","ok","Rows: " + currentMonthRows.length);
-    }catch(e){
-      setAdminStatus("Network error","Could not reach backend URL.","err","Rows: 0");
-      renderReportTable([]);
-      currentMonthRows = [];
-    }
-  }
+      const year = yearSel.value;
+      const month = monthSel.value;
 
-  function exportRowsToCsv(rows, filename){
-    if(!rows || !rows.length){ alert("No rows to export"); return; }
-    const header = ["Date","Name","Action","InTime","OutTime","DurationHrs","PhotoURL","DeviceId"];
-    const lines = [header];
-    for(const r of rows){
-      lines.push([
-        r.date||"",
-        r.name||"",
-        r.action||"",
-        r.inTime||"",
-        r.outTime||"",
-        r.durationHrs||"",
-        r.photoUrl||"",
-        r.deviceId||""
-      ]);
-    }
-    const csv = lines.map(arr=>arr.map(v=>`"${String(v).replaceAll('"','""')}"`).join(",")).join("\r\n");
-    const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
+      repSet(true, "Loading…", "Fetching from Google Sheets…");
+      repBody.innerHTML = "";
 
-  function downloadTodayCsv(){
-    const today = todayISO();
-    const done = loadJSON(LS_DONE, []).filter(r=>r.date===today);
-    const open = loadJSON(LS_OPEN, {});
-    const openRows = [];
-    for(const k in open){
-      const r=open[k];
-      if(r && r.date===today){
-        openRows.push({
-          date: today, name:r.name, action:"IN(OPEN)",
-          inTime:r.inTime||"", outTime:"", durationHrs:"", photoUrl:r.lastPhotoUrl||"", deviceId:deviceId()
-        });
+      try{
+        const res = await fetch(`${WEB_APP_URL}?action=report&year=${encodeURIComponent(year)}&month=${encodeURIComponent(month)}`);
+        const data = await res.json();
+
+        if(!data.ok){
+          repSet(false, "Failed", data.error || "Could not load report. Ensure Apps Script access = Anyone.");
+          return;
+        }
+
+        const rows = data.rows || [];
+        if(rows.length===0){
+          repSet(true, "No data", "No logs found for this month.");
+          return;
+        }
+
+        repSet(true, "Loaded", `Rows: ${rows.length}`);
+
+        for(const r of rows){
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${escapeHtml(r.date || "")}</td>
+            <td><b>${escapeHtml(r.employee || "")}</b></td>
+            <td>${escapeHtml(r.action || "")}</td>
+            <td>${escapeHtml(r.inTime || "")}</td>
+            <td>${escapeHtml(r.outTime || "")}</td>
+            <td>${escapeHtml(r.hrs || "")}</td>
+            <td>${r.photoUrl ? `<a href="${r.photoUrl}" target="_blank"><img class="thumb" src="${r.photoUrl}"></a>` : "-"}</td>
+          `;
+          repBody.appendChild(tr);
+        }
+      }catch(e){
+        repSet(false, "Failed", "Network/CORS error. Re-deploy Apps Script as Anyone.");
       }
     }
-    const rows = [
-      ...done.map(r=>({
-        date:r.date, name:r.name, action:"IN-OUT",
-        inTime:r.inTime||"", outTime:r.outTime||"", durationHrs:r.durationHrs||"", photoUrl:r.photoUrl||"", deviceId:deviceId()
-      })),
-      ...openRows
-    ];
-    exportRowsToCsv(rows, `EcoSudar_Today_${today}.csv`);
-  }
 
-  // ===== TABS =====
-  function showTab(which){
-    const scan = (which==="scan");
-    el("scanTab").style.display = scan ? "block" : "none";
-    el("adminTab").style.display = scan ? "none" : "block";
-    el("tabScanBtn").classList.toggle("active", scan);
-    el("tabAdminBtn").classList.toggle("active", !scan);
-    showAdminArea();
-  }
+    document.getElementById("btnLoad").onclick = loadReport;
 
-  // Prevent switching to Admin while scanning is running (avoids camera issues)
-  function safeGoAdmin(){
-    if(scanRunning){
-      alert("End Scan Session first, then open Admin Mode.");
-      return;
-    }
-    showTab("admin");
-  }
+    document.getElementById("btnExport").onclick = ()=>{
+      const rows = [];
+      rows.push(["Date","Employee","Action","IN","OUT","Hrs","PhotoURL"]);
 
-  // ===== INIT =====
-  function init(){
-    // today pill
-    el("todayPill").textContent = "Today: " + todayISO();
+      [...repBody.querySelectorAll("tr")].forEach(tr=>{
+        const tds = [...tr.querySelectorAll("td")];
+        const photoA = tds[6]?.querySelector("a");
+        rows.push([
+          tds[0]?.innerText||"",
+          tds[1]?.innerText||"",
+          tds[2]?.innerText||"",
+          tds[3]?.innerText||"",
+          tds[4]?.innerText||"",
+          tds[5]?.innerText||"",
+          photoA ? photoA.href : ""
+        ]);
+      });
 
-    // year/month selects
-    const now = new Date();
-    const y = now.getFullYear();
-    const yearSel = el("yearSel");
-    for(let yy=y-2; yy<=y+1; yy++){
-      const opt = document.createElement("option");
-      opt.value=String(yy); opt.textContent=String(yy);
-      if(yy===y) opt.selected=true;
-      yearSel.appendChild(opt);
-    }
-    const monthSel = el("monthSel");
-    const m = now.getMonth()+1;
-    const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-    for(let mm=1; mm<=12; mm++){
-      const opt = document.createElement("option");
-      opt.value=String(mm);
-      opt.textContent = `${String(mm).padStart(2,"0")} - ${monthNames[mm-1]}`;
-      if(mm===m) opt.selected=true;
-      monthSel.appendChild(opt);
-    }
+      const csv = rows.map(r=>r.map(v=> `"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+      const blob = new Blob([csv], {type:"text/csv"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "EcoSudar_MonthlyReport.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    };
 
-    // load tables
-    renderTodayTable();
-    showAdminArea();
-
-    // handlers
-    el("startBtn").addEventListener("click", startSession);
-    el("endBtn").addEventListener("click", endSession);
-    el("modalCloseBtn").addEventListener("click", endSession);
-    el("refreshTodayBtn").addEventListener("click", async ()=>{
-      setStatus("Refreshing…","Fetching today state from server (optional).","ok","Today: "+todayISO());
-      await rebuildOpenFromServerToday().catch(()=>{});
-      setStatus("Ready","Tap “Start Scan Session” to begin.","ok","Today: "+todayISO());
-    });
-    el("downloadTodayBtn").addEventListener("click", downloadTodayCsv);
-
-    el("tabScanBtn").addEventListener("click", ()=>showTab("scan"));
-    el("tabAdminBtn").addEventListener("click", safeGoAdmin);
-    el("adminCornerBtn").addEventListener("click", safeGoAdmin);
-
-    el("pinBtn").addEventListener("click", ()=>{
-      const v = (el("pinInput").value||"").trim();
-      if(v===ADMIN_PIN){
-        setAdminLoggedIn(true);
-        el("pinInput").value="";
-        showAdminArea();
-      }else{
-        alert("Wrong PIN");
-      }
-    });
-
-    el("logoutBtn").addEventListener("click", ()=>{
-      setAdminLoggedIn(false);
-      showAdminArea();
-    });
-
-    el("loadReportBtn").addEventListener("click", loadReport);
-    el("exportReportBtn").addEventListener("click", ()=>{
-      const year = el("yearSel").value;
-      const month = String(el("monthSel").value).padStart(2,"0");
-      exportRowsToCsv(currentMonthRows, `EcoSudar_Report_${year}-${month}.csv`);
-    });
-
-    // default tab
-    showTab("scan");
-
-    setStatus("Ready","Tap “Start Scan Session” to begin.","ok","Today: "+todayISO());
-  }
-
-  init();
-</script>
+    // Optional ping check
+    (async ()=>{
+      try{ await fetch(`${WEB_APP_URL}?action=ping`); }catch(e){}
+    })();
+  </script>
 </body>
 </html>
